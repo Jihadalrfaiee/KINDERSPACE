@@ -43,6 +43,20 @@
                                 <i class="fas fa-users"></i> الطلاب
                             </a>
                         </li>
+                        @if(Auth::check() && in_array(Auth::user()->role, ['super_admin', 'admin', 'accountant']))
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-wallet"></i> المحاسبة
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="financeDropdown">
+                                    <li><a class="dropdown-item" href="{{ route('fee-structures.index') }}">هيكل الرسوم</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('student-fees.index') }}">قيود الرسوم</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('installments.index') }}">الأقساط</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('expenses.index') }}">المصاريف</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('salaries.index') }}">الرواتب</a></li>
+                                </ul>
+                            </li>
+                        @endif
                         
                         {{-- رابط الصلاحيات للمدير فقط --}}
                         @hasRole('admin')

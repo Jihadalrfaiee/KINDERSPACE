@@ -16,7 +16,7 @@ class InstallmentController extends Controller
 
     public function create()
     {
-        $fees = StudentFee::all();
+        $fees = StudentFee::with('student')->get();
         return view('finance.installments.create', compact('fees'));
     }
 
@@ -38,7 +38,7 @@ class InstallmentController extends Controller
 
     public function edit(Installment $installment)
     {
-        $fees = StudentFee::all();
+        $fees = StudentFee::with('student')->get();
         return view('finance.installments.edit', compact('installment', 'fees'));
     }
 

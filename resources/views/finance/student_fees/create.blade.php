@@ -19,11 +19,39 @@
         </div>
         <div class="mb-3">
             <label class="form-label">مجموع الرسوم</label>
-            <input name="total_tuition" class="form-control">
+            <input name="total_tuition" class="form-control" value="{{ old('total_tuition') }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">مجموع مواصلات</label>
+            <input name="total_transportation" class="form-control" value="{{ old('total_transportation', 0) }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">الخصم</label>
+            <input name="discount_amount" class="form-control" value="{{ old('discount_amount', 0) }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">سبب الخصم</label>
+            <input name="discount_reason" class="form-control" value="{{ old('discount_reason') }}">
         </div>
         <div class="mb-3">
             <label class="form-label">صافي</label>
-            <input name="net_amount" class="form-control">
+            <input name="net_amount" class="form-control" value="{{ old('net_amount') }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">المدفوع</label>
+            <input name="paid_amount" class="form-control" value="{{ old('paid_amount', 0) }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">المتبقي</label>
+            <input name="remaining_amount" class="form-control" value="{{ old('remaining_amount', old('net_amount')) }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">الحالة</label>
+            <select name="status" class="form-control">
+                <option value="pending" selected>معلق</option>
+                <option value="partial">جزئي</option>
+                <option value="paid">مدفوع</option>
+            </select>
         </div>
         <button class="btn btn-primary">حفظ</button>
     </form>

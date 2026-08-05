@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <style>
+    .box { fill: #fff; stroke: #2d3748; stroke-width: 2px; }
+    .title { font: bold 14px sans-serif; fill: #1f2937; }
+    .col { font: 12px sans-serif; fill: #374151; }
+    .fk { font: italic 11px sans-serif; fill: #9CA3AF; }
+    .rel { stroke: #6B7280; stroke-width: 1.5; marker-end: url(#arrow); }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#6B7280" />
+    </marker>
+  </defs>
+
+  <!-- Kindergartens -->
+  <rect x="40" y="40" width="220" height="80" class="box" rx="6"/>
+  <text x="150" y="60" text-anchor="middle" class="title">kindergartens</text>
+  <text x="60" y="82" class="col">id (PK)</text>
+  <text x="60" y="98" class="col">name, address, phone, email</text>
+
+  <!-- Users -->
+  <rect x="320" y="40" width="260" height="140" class="box" rx="6"/>
+  <text x="450" y="60" text-anchor="middle" class="title">users</text>
+  <text x="340" y="86" class="col">id (PK)</text>
+  <text x="340" y="102" class="col">kindergarten_id (FK)</text>
+  <text x="340" y="118" class="col">name, email, password, role</text>
+  <text x="340" y="134" class="col">is_active, last_login_at</text>
+
+  <!-- Categories -->
+  <rect x="620" y="40" width="220" height="72" class="box" rx="6"/>
+  <text x="730" y="60" text-anchor="middle" class="title">categories</text>
+  <text x="640" y="86" class="col">id (PK)</text>
+  <text x="640" y="102" class="col">kindergarten_id (FK), name</text>
+
+  <!-- Sections -->
+  <rect x="620" y="130" width="220" height="80" class="box" rx="6"/>
+  <text x="730" y="150" text-anchor="middle" class="title">sections</text>
+  <text x="640" y="176" class="col">id (PK)</text>
+  <text x="640" y="192" class="col">category_id (FK), kindergarten_id (FK)</text>
+
+  <!-- Students -->
+  <rect x="40" y="180" width="300" height="160" class="box" rx="6"/>
+  <text x="190" y="200" text-anchor="middle" class="title">students</text>
+  <text x="60" y="228" class="col">id (PK)</text>
+  <text x="60" y="244" class="col">kindergarten_id (FK), section_id (FK)</text>
+  <text x="60" y="260" class="col">parent_id (FK), registration_number</text>
+  <text x="60" y="276" class="col">first_name, father_name, family_name, status</text>
+
+  <!-- Student Fees & Fee Structures -->
+  <rect x="380" y="260" width="300" height="140" class="box" rx="6"/>
+  <text x="530" y="280" text-anchor="middle" class="title">student_fees</text>
+  <text x="400" y="306" class="col">id (PK)</text>
+  <text x="400" y="322" class="col">student_id (FK), kindergarten_id (FK)</text>
+  <text x="400" y="338" class="col">academic_year, net_amount, paid_amount, remaining_amount</text>
+
+  <rect x="720" y="260" width="260" height="100" class="box" rx="6"/>
+  <text x="850" y="280" text-anchor="middle" class="title">fee_structures</text>
+  <text x="740" y="306" class="col">id (PK)</text>
+  <text x="740" y="322" class="col">kindergarten_id (FK), academic_year</text>
+  <text x="740" y="338" class="col">tuition_fee, transportation_fee</text>
+
+  <!-- Installments -->
+  <rect x="380" y="420" width="300" height="120" class="box" rx="6"/>
+  <text x="530" y="440" text-anchor="middle" class="title">installments</text>
+  <text x="400" y="468" class="col">id (PK)</text>
+  <text x="400" y="484" class="col">student_fee_id (FK), student_id (FK)</text>
+  <text x="400" y="500" class="col">installment_number, amount, due_date, status</text>
+
+  <!-- Expenses -->
+  <rect x="720" y="380" width="260" height="120" class="box" rx="6"/>
+  <text x="850" y="400" text-anchor="middle" class="title">expenses</text>
+  <text x="740" y="428" class="col">id (PK)</text>
+  <text x="740" y="444" class="col">kindergarten_id (FK), category, amount, date</text>
+
+  <!-- Salaries -->
+  <rect x="720" y="520" width="260" height="120" class="box" rx="6"/>
+  <text x="850" y="540" text-anchor="middle" class="title">salaries</text>
+  <text x="740" y="568" class="col">id (PK)</text>
+  <text x="740" y="584" class="col">user_id (FK), base_salary, net_salary, month, year</text>
+
+  <!-- Audit Logs -->
+  <rect x="40" y="380" width="300" height="120" class="box" rx="6"/>
+  <text x="190" y="400" text-anchor="middle" class="title">audit_logs</text>
+  <text x="60" y="428" class="col">id (PK)</text>
+  <text x="60" y="444" class="col">user_id (FK), action, model_type, model_id, old_values, new_values</text>
+
+  <!-- Relationships (arrows) -->
+  <line x1="260" y1="80" x2="320" y2="80" class="rel" />
+  <line x1="460" y1="120" x2="620" y2="120" class="rel" />
+  <line x1="190" y1="200" x2="190" y2="248" class="rel" />
+  <line x1="340" y1="220" x2="380" y2="306" class="rel" />
+  <line x1="280" y1="320" x2="380" y2="340" class="rel" />
+  <line x1="680" y1="300" x2="720" y2="300" class="rel" />
+  <line x1="660" y1="320" x2="720" y2="320" class="rel" />
+  <line x1="540" y1="380" x2="540" y2="420" class="rel" />
+  <line x1="560" y1="480" x2="560" y2="420" class="rel" />
+  <line x1="900" y1="420" x2="720" y2="440" class="rel" />
+
+  <!-- Legend -->
+  <rect x="40" y="660" width="940" height="120" rx="6" fill="#f8fafc" stroke="#e5e7eb" />
+  <text x="60" y="688" class="title">مخطط ER - مفتاح</text>
+  <text x="60" y="710" class="col">PK: مفتاح أساسي (id). FK: مفتاح خارجي يشير إلى جدول آخر.</text>
+  <text x="60" y="730" class="col">اتجاه السهم يوضح اتجاه العلاقة (مثال: students -> student_fees يعني student_id في student_fees يشير إلى students.id)</text>
+
+</svg>

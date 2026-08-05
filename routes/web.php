@@ -72,7 +72,7 @@ Route::post('/login', function (Request $request) {
     }
 
     return back()->with('error', 'بيانات الدخول غير صحيحة')->withInput();
-})->name('login.submit');
+})->middleware('throttle:6,1')->name('login.submit');
 
 // معالجة تسجيل الدخول من /test-login أيضاً
 Route::post('/test-login', function (Request $request) {
@@ -94,7 +94,7 @@ Route::post('/test-login', function (Request $request) {
     }
 
     return back()->with('error', 'بيانات الدخول غير صحيحة')->withInput();
-});
+})->middleware('throttle:6,1');
 
 // تسجيل الخروج
 Route::post('/logout', function (Request $request) {
@@ -292,8 +292,17 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','role:super_admin,admin'])->group(function () {
     Route::resource('roles', RoleController::class);
-Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class);
+});
+
+// موارد المحاسبة محفوظة للمديرين والمحاسبين
+Route::middleware(['auth','role:super_admin,admin,accountant'])->group(function () {
+    Route::resource('fee-structures', FeeStructureController::class);
+    Route::resource('student-fees', StudentFeeController::class);
+    Route::resource('installments', InstallmentController::class);
+    Route::resource('expenses', ExpenseController::class);
+    Route::resource('salaries', SalaryController::class);
 });
 

@@ -168,7 +168,7 @@
                     type="email" 
                     id="email" 
                     name="email" 
-                    value="admin@test.com"
+                    value="admin@kindergarten.ly"
                     required 
                     autofocus
                     placeholder="أدخل البريد الإلكتروني">
@@ -180,7 +180,7 @@
                     type="password" 
                     id="password" 
                     name="password" 
-                    value="123456"
+                    value="password123"
                     required
                     placeholder="أدخل كلمة المرور">
             </div>
@@ -192,8 +192,8 @@
 
         <div class="test-info">
             <p><strong>🔑 للاختبار استخدم:</strong></p>
-            <p><strong>البريد:</strong> admin@test.com</p>
-            <p><strong>كلمة المرور:</strong> 123456</p>
+            <p><strong>البريد:</strong> admin@kindergarten.ly</p>
+            <p><strong>كلمة المرور:</strong> password123</p>
         </div>
     </div>
 </body>

@@ -44,3 +44,7 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit --colors=always --stop-on-failure
+
+      - name: Run accounting feature tests (targeted)
+        # Run only the accounting feature tests to give faster feedback for accounting PRs
+        run: php artisan test --filter AccountingFeatureTest --stop-on-failure

@@ -297,3 +297,12 @@ Route::middleware(['auth','role:super_admin,admin'])->group(function () {
     Route::resource('users', UserController::class);
 });
 
+// موارد المحاسبة محفوظة للمديرين والمحاسبين
+Route::middleware(['auth','role:super_admin,admin,accountant'])->group(function () {
+    Route::resource('fee-structures', FeeStructureController::class);
+    Route::resource('student-fees', StudentFeeController::class);
+    Route::resource('installments', InstallmentController::class);
+    Route::resource('expenses', ExpenseController::class);
+    Route::resource('salaries', SalaryController::class);
+});
+

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StudentFee;
 use App\Models\Student;
 use App\Models\Kindergarten;
+use App\Models\FeeStructure;
 use Illuminate\Http\Request;
 
 class StudentFeeController extends Controller
@@ -38,9 +39,75 @@ class StudentFeeController extends Controller
             'status' => 'required|in:pending,partial,paid',
         ]);
 
-        StudentFee::create($data);
+        $studentFee = StudentFee::create($data);
+
+        // حاول توليد الأقساط تلقائياً عند وجود هيكل رسوم متاح
+        try {
+            $this->generateInstallmentsForStudentFee($studentFee);
+        } catch (\Throwable $e) {
+            // لا نُحبط العملية إذا فشل التوليد التلقائي، فقط نسجل رسالة في السجلات
+            logger()->warning('Failed to auto-generate installments for student fee: ' . $e->getMessage());
+        }
 
         return redirect()->route('student-fees.index')->with('success', 'تم إنشاء قيد رسوم الطالب');
+    }
+
+    /**
+     * Generate installments for a student fee.
+     * Uses FeeStructure.installments_count when available, otherwise falls back to settings.default_installments or 5.
+     */
+    private function generateInstallmentsForStudentFee(StudentFee $studentFee)
+    {
+        // حاول الحصول على هيكل الرسوم للروضة والسنة
+        $feeStructure = FeeStructure::where('kindergarten_id', $studentFee->kindergarten_id)
+            ->where('academic_year', $studentFee->academic_year)
+            ->where('is_active', true)
+            ->first();
+
+        if ($feeStructure) {
+            $count = (int) $feeStructure->installments_count;
+        } else {
+            // اقرأ من الإعدادات إن وجدت
+            $default = (int) optional(\App\Models\Setting::where('key', 'default_installments')->first())->value ?: 5;
+            $count = $default > 0 ? $default : 5;
+        }
+
+        if ($count < 1) {
+            $count = 1;
+        }
+
+        // حذف أي أقساط قديمة مرتبطة (لتجنب التكرار)
+        $studentFee->installments()->delete();
+
+        $net = (float) $studentFee->net_amount;
+        $base = floor($net / $count * 100) / 100; // round down to 2 decimals
+        $remainder = round($net - ($base * $count), 2);
+
+        $startDate = now()->addDays(7); // افتراضيًا تبدأ الأقساط بعد أسبوع
+
+        for ($i = 1; $i <= $count; $i++) {
+            $amount = $base;
+            // أضف الباقي إلى آخر قسط
+            if ($i === $count) {
+                $amount = round($amount + $remainder, 2);
+            }
+
+            $studentFee->installments()->create([
+                'student_id' => $studentFee->student_id,
+                'installment_number' => $i,
+                'amount' => $amount,
+                'due_date' => $startDate->copy()->addMonths($i - 1)->toDateString(),
+                'status' => 'pending',
+            ]);
+        }
+
+        // تأكد من تحديث الأرصدة
+        $studentFee->update([
+            'paid_amount' => $studentFee->paid_amount ?? 0,
+            'remaining_amount' => $studentFee->net_amount - ($studentFee->paid_amount ?? 0),
+        ]);
+
+        return true;
     }
 
     public function edit(StudentFee $studentFee)

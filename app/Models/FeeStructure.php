@@ -8,6 +8,8 @@ class FeeStructure extends Model
 {
     protected $fillable = [
         'kindergarten_id', 'academic_year', 'tuition_fee', 'transportation_fee', 'installments_count', 'is_active',
+        // scheduling
+        'schedule_type', 'first_due_offset_days', 'interval_months', 'custom_schedule',
     ];
 
     protected $casts = [
@@ -15,6 +17,9 @@ class FeeStructure extends Model
         'transportation_fee' => 'decimal:2',
         'installments_count' => 'integer',
         'is_active' => 'boolean',
+        'first_due_offset_days' => 'integer',
+        'interval_months' => 'integer',
+        'custom_schedule' => 'array',
     ];
 
     public function kindergarten()

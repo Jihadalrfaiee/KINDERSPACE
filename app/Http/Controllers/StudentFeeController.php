@@ -66,10 +66,18 @@ class StudentFeeController extends Controller
 
         if ($feeStructure) {
             $count = (int) $feeStructure->installments_count;
+            $scheduleType = $feeStructure->schedule_type ?? 'monthly';
+            $firstOffset = $feeStructure->first_due_offset_days ?? 7;
+            $intervalMonths = $feeStructure->interval_months ?? 1;
+            $customSchedule = $feeStructure->custom_schedule ?? null;
         } else {
             // اقرأ من الإعدادات إن وجدت
             $default = (int) optional(\App\Models\Setting::where('key', 'default_installments')->first())->value ?: 5;
             $count = $default > 0 ? $default : 5;
+            $scheduleType = 'monthly';
+            $firstOffset = 7;
+            $intervalMonths = 1;
+            $customSchedule = null;
         }
 
         if ($count < 1) {
@@ -83,7 +91,21 @@ class StudentFeeController extends Controller
         $base = floor($net / $count * 100) / 100; // round down to 2 decimals
         $remainder = round($net - ($base * $count), 2);
 
-        $startDate = now()->addDays(7); // افتراضيًا تبدأ الأقساط بعد أسبوع
+        $startDate = now()->addDays($firstOffset); // use configured offset
+
+        // If custom schedule provided (array of dates), use those dates
+        $customDates = null;
+        if ($scheduleType === 'custom' && $customSchedule) {
+            if (is_array($customSchedule)) {
+                $customDates = $customSchedule;
+            } else {
+                try {
+                    $customDates = json_decode($customSchedule, true);
+                } catch (\Throwable $e) {
+                    $customDates = null;
+                }
+            }
+        }
 
         for ($i = 1; $i <= $count; $i++) {
             $amount = $base;
@@ -92,11 +114,19 @@ class StudentFeeController extends Controller
                 $amount = round($amount + $remainder, 2);
             }
 
+            $dueDate = null;
+            if ($customDates && isset($customDates[$i - 1])) {
+                $dueDate = $customDates[$i - 1];
+            } else {
+                // monthly schedule with custom interval
+                $dueDate = $startDate->copy()->addMonths(($i - 1) * max(1, (int)$intervalMonths))->toDateString();
+            }
+
             $studentFee->installments()->create([
                 'student_id' => $studentFee->student_id,
                 'installment_number' => $i,
                 'amount' => $amount,
-                'due_date' => $startDate->copy()->addMonths($i - 1)->toDateString(),
+                'due_date' => $dueDate,
                 'status' => 'pending',
             ]);
         }

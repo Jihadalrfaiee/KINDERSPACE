@@ -309,5 +309,9 @@ Route::middleware(['auth','role:super_admin,admin,accountant'])->group(function 
     Route::resource('installments', InstallmentController::class);
     Route::resource('expenses', ExpenseController::class);
     Route::resource('salaries', SalaryController::class);
+
+    // Reports
+    Route::get('reports/monthly', [\App\Http\Controllers\ReportsController::class, 'monthly'])->name('reports.monthly');
+    Route::get('reports/student/{student}', [\App\Http\Controllers\ReportsController::class, 'studentBalance'])->name('reports.student');
 });
 

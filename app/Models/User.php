@@ -17,7 +17,18 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'national_id',
+        'role',
         'role_id',
+        'telegram_chat_id',
+        'profile_photo',
+        'is_active',
+        'last_login_at',
+        'academic_qualification',
+        'previous_experience',
+        'years_of_experience',
+        'job_title',
     ];
 
     /**
@@ -66,6 +77,16 @@ class User extends Authenticatable
         return is_object($role) ? $role : null;
     }
 
+    private function getRoleNameValue()
+    {
+        if (array_key_exists('role', $this->attributes) && is_string($this->attributes['role'])) {
+            return $this->attributes['role'];
+        }
+
+        $role = $this->getRoleObject();
+        return $role?->name;
+    }
+
     // التحقق هل المستخدم يمتلك صلاحية معينة
     public function hasPermission($permission)
     {
@@ -81,29 +102,29 @@ class User extends Authenticatable
     // التحقق هل المستخدم يمتلك دوراً معيناً
     public function hasRole($roleName)
     {
-        $role = $this->getRoleObject();
+        $roleNameValue = $this->getRoleNameValue();
         
-        if (!$role) {
+        if (!$roleNameValue) {
             return false;
         }
 
         if (is_string($roleName)) {
-            return $role->name === $roleName;
+            return $roleNameValue === $roleName;
         }
-        
-        return $role->id === $roleName->id;
+
+        return $roleNameValue === $roleName->name;
     }
 
     // التحقق هل المستخدم يمتلك أياً من هذه الأدوار المحددة
     public function hasAnyRole(...$roles)
     {
-        $role = $this->getRoleObject();
+        $roleNameValue = $this->getRoleNameValue();
         
-        if (!$role) {
+        if (!$roleNameValue) {
             return false;
         }
         
-        return in_array($role->name, $roles);
+        return in_array($roleNameValue, $roles);
     }
 
     // دالة سريعة للتحقق هل المستخدم هو مدير النظام

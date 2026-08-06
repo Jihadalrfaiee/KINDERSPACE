@@ -98,23 +98,72 @@
     </nav>
 
     {{-- المحتوى الرئيسي --}}
-    <main class="container-fluid py-4">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+    <div class="container-fluid py-4">
+        <div class="row">
+            @auth
+                <aside class="col-12 col-lg-2 mb-4 mb-lg-0">
+                    <div class="card shadow-sm rounded-3 border-0 h-100">
+                        <div class="card-body p-3">
+                            <h5 class="card-title mb-3">القائمة الرئيسية</h5>
+                            <div class="list-group list-group-flush">
+                                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-home me-2"></i> الرئيسية
+                                </a>
+                                <a href="{{ route('students.index') }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-users me-2"></i> الطلاب
+                                </a>
+                                @if(Auth::check() && in_array(Auth::user()->role, ['super_admin', 'admin', 'accountant']))
+                                    <div class="mt-3 mb-2 text-secondary small">المحاسبة</div>
+                                    <a href="{{ route('fee-structures.index') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-wallet me-2"></i> هيكل الرسوم
+                                    </a>
+                                    <a href="{{ route('student-fees.index') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-file-invoice-dollar me-2"></i> قيود الرسوم
+                                    </a>
+                                    <a href="{{ route('installments.index') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-calendar-check me-2"></i> الأقساط
+                                    </a>
+                                    <a href="{{ route('expenses.index') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-money-bill-wave me-2"></i> المصاريف
+                                    </a>
+                                    <a href="{{ route('salaries.index') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-hand-holding-usd me-2"></i> الرواتب
+                                    </a>
+                                    <a href="{{ route('reports.monthly') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-chart-line me-2"></i> تقارير شهرية
+                                    </a>
+                                @endif
+                                @hasRole('admin')
+                                    <div class="mt-3 mb-2 text-secondary small">الإدارة</div>
+                                    <a href="{{ route('roles.index') }}" class="list-group-item list-group-item-action">
+                                        <i class="fas fa-user-shield me-2"></i> الصلاحيات
+                                    </a>
+                                @endhasRole
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            @endauth
 
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+            <main class="col-12 @auth col-lg-10 offset-lg-2 @endauth">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-check-circle"></i> {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
 
-        @yield('content')
-    </main>
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </main>
+        </div>
+    </div>
 
     {{-- Footer --}}
     <footer class="bg-white text-center text-muted py-3 mt-5 border-top">

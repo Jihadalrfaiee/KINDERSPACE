@@ -103,43 +103,98 @@
             @auth
                 <aside class="col-12 col-lg-2 mb-4 mb-lg-0">
                     <div class="card shadow-sm rounded-3 border-0 h-100">
-                        <div class="card-body p-3">
-                            <h5 class="card-title mb-3">القائمة الرئيسية</h5>
-                            <div class="list-group list-group-flush">
-                                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-home me-2"></i> الرئيسية
-                                </a>
-                                <a href="{{ route('students.index') }}" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-users me-2"></i> الطلاب
-                                </a>
-                                @if(Auth::check() && in_array(Auth::user()->role, ['super_admin', 'admin', 'accountant']))
-                                    <div class="mt-3 mb-2 text-secondary small">المحاسبة</div>
-                                    <a href="{{ route('fee-structures.index') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-wallet me-2"></i> هيكل الرسوم
-                                    </a>
-                                    <a href="{{ route('student-fees.index') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-file-invoice-dollar me-2"></i> قيود الرسوم
-                                    </a>
-                                    <a href="{{ route('installments.index') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-calendar-check me-2"></i> الأقساط
-                                    </a>
-                                    <a href="{{ route('expenses.index') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-money-bill-wave me-2"></i> المصاريف
-                                    </a>
-                                    <a href="{{ route('salaries.index') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-hand-holding-usd me-2"></i> الرواتب
-                                    </a>
-                                    <a href="{{ route('reports.monthly') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-chart-line me-2"></i> تقارير شهرية
-                                    </a>
-                                @endif
-                                @hasRole('admin')
-                                    <div class="mt-3 mb-2 text-secondary small">الإدارة</div>
-                                    <a href="{{ route('roles.index') }}" class="list-group-item list-group-item-action">
-                                        <i class="fas fa-user-shield me-2"></i> الصلاحيات
-                                    </a>
-                                @endhasRole
+                        <div class="card-body p-2">
+                            <h6 class="card-title mb-2 px-2">القائمة الرئيسية</h6>
+
+                            <div class="accordion" id="mainSidebarAccordion">
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingHome">
+                                        <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHome" aria-expanded="true" aria-controls="collapseHome">
+                                            <i class="fas fa-home me-2"></i> صفحة سريعة
+                                        </button>
+                                    </h2>
+                                    <div id="collapseHome" class="accordion-collapse collapse show" aria-labelledby="headingHome" data-bs-parent="#mainSidebarAccordion">
+                                        <div class="accordion-body p-2">
+                                            <a href="{{ route('dashboard') }}" class="d-block py-1 px-2 {{ Request::routeIs('dashboard') ? 'fw-bold text-primary' : '' }}"><i class="fas fa-home me-1"></i> الرئيسية</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingStudents">
+                                        <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseStudents">
+                                            <i class="fas fa-users me-2"></i> الطلاب
+                                        </button>
+                                    </h2>
+                                    <div id="collapseStudents" class="accordion-collapse collapse" aria-labelledby="headingStudents" data-bs-parent="#mainSidebarAccordion">
+                                        <div class="accordion-body p-2">
+                                            <a href="{{ route('students.index') }}" class="d-block py-1 px-2 {{ Request::routeIs('students.*') ? 'fw-bold text-primary' : '' }}">قائمة الطلاب</a>
+                                            <a href="{{ route('students.create') }}" class="d-block py-1 px-2">إضافة طالب</a>
+                                            <a href="{{ route('student-fees.index') }}" class="d-block py-1 px-2">قيود ورسوم</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTeaching">
+                                        <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeaching" aria-expanded="false" aria-controls="collapseTeaching">
+                                            <i class="fas fa-chalkboard-teacher me-2"></i> المعلمات والمواد
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTeaching" class="accordion-collapse collapse" aria-labelledby="headingTeaching" data-bs-parent="#mainSidebarAccordion">
+                                        <div class="accordion-body p-2">
+                                            <a href="{{ route('users.index') }}" class="d-block py-1 px-2">المستخدمون</a>
+                                            <a href="{{ route('roles.index') }}" class="d-block py-1 px-2">الصلاحيات</a>
+                                            <a href="{{ url('/teacher-assignments') }}" class="d-block py-1 px-2">ربط المعلمات</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingProgram">
+                                        <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProgram" aria-expanded="false" aria-controls="collapseProgram">
+                                            <i class="fas fa-calendar-week me-2"></i> البرنامج الأسبوعي
+                                        </button>
+                                    </h2>
+                                    <div id="collapseProgram" class="accordion-collapse collapse" aria-labelledby="headingProgram" data-bs-parent="#mainSidebarAccordion">
+                                        <div class="accordion-body p-2">
+                                            <a href="{{ url('/weekly-program') }}" class="d-block py-1 px-2">عرض البرنامج</a>
+                                            <a href="{{ url('/weekly-program/create') }}" class="d-block py-1 px-2">إضافة/تعديل الحصص</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingAttendance">
+                                        <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAttendance" aria-expanded="false" aria-controls="collapseAttendance">
+                                            <i class="fas fa-sign-in-alt me-2"></i> الحضور والانصراف
+                                        </button>
+                                    </h2>
+                                    <div id="collapseAttendance" class="accordion-collapse collapse" aria-labelledby="headingAttendance" data-bs-parent="#mainSidebarAccordion">
+                                        <div class="accordion-body p-2">
+                                            <a href="{{ url('/attendance') }}" class="d-block py-1 px-2">تسجيل الحضور</a>
+                                            <a href="{{ url('/attendance/report') }}" class="d-block py-1 px-2">تقارير الحضور</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSections">
+                                        <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSections" aria-expanded="false" aria-controls="collapseSections">
+                                            <i class="fas fa-layer-group me-2"></i> الشُعب والفئات
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSections" class="accordion-collapse collapse" aria-labelledby="headingSections" data-bs-parent="#mainSidebarAccordion">
+                                        <div class="accordion-body p-2">
+                                            <a href="{{ url('/sections') }}" class="d-block py-1 px-2">قائمة الشُعب</a>
+                                            <a href="{{ url('/sections/create') }}" class="d-block py-1 px-2">إضافة شعبة</a>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
+
                         </div>
                     </div>
                 </aside>
